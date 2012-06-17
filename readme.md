@@ -5,7 +5,7 @@ Current Version: 06.17.2012
 ---------------------------
 Changed
 -------
-* Basic platforming
+* Rewrote collision logic
 
 Previous Version: 06.16.2012
 ---------------------------

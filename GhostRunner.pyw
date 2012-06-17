@@ -42,21 +42,17 @@ class platform(somber_engine.active):
 
 class character(somber_engine.active):
 	def __init__(self):
-		somber_engine.active.__init__(self,'test.png',somber=somber)
+		somber_engine.active.__init__(self,'mario.png',somber=somber)
 		
 		somber.add_active(self)
 	
 	def jump(self):
-		self.vspeed = -8
-		#self.gravity = 0.3
+		self.vspeed = -10
 	
 	def update(self):
 		somber_engine.active.update(self)
 		
 		_collides = self.collides_with_group(somber.solid_objects)
-		
-		d1 = False
-		d2 = False
 		
 		if _collides:
 			for object in _collides:
@@ -64,7 +60,8 @@ class character(somber_engine.active):
 				if self.collide_at((self.rect.topleft[0],self.rect.topleft[1]+1),object):
 					self.hspeed = 0
 					self.rect.move_ip(-(self.rect.topleft[0]-object.rect.topright[0]),0)
-				elif self.collide_at((self.rect.bottomleft[0],self.rect.bottomleft[1]-(self.vspeed+1)),object):
+				elif self.collide_at((self.rect.bottomleft[0],
+					self.rect.bottomleft[1]-(self.vspeed+1)),object):
 					self.hspeed = 0
 					self.rect.move_ip(-(self.rect.bottomleft[0]-object.rect.bottomright[0]),0)
 				
@@ -72,22 +69,19 @@ class character(somber_engine.active):
 				elif self.collide_at((self.rect.topright[0],self.rect.topright[1]+1),object):
 					self.hspeed = 0
 					self.rect.move_ip(-(self.rect.topright[0]-object.rect.topleft[0]),0)
-				elif self.collide_at((self.rect.bottomright[0],self.rect.bottomright[1]-(self.vspeed+1)),object):
+				elif self.collide_at((self.rect.bottomright[0],
+					self.rect.bottomright[1]-(self.vspeed+1)),object):
 					self.hspeed = 0
 					self.rect.move_ip(-(self.rect.bottomright[0]-object.rect.bottomleft[0]),0)
-				
-				#Up
-				#elif self.vspeed<0:
 				
 				#Down
 				elif self.vspeed>=0:
 					if self.collide_at((self.rect.bottomleft[0],self.rect.bottomleft[1]+1),object):
 						self.vspeed = 0
 						self.rect.move_ip(0,-(self.rect.bottomleft[1]-object.rect.topleft[1]))
-					elif self.collide_at((self.rect.bottomright[0],self.rect.bottomright[1]+1),object):
+					elif self.collide_at((self.rect.bottomright[0]-1,self.rect.bottomright[1]+1),object):
 						self.vspeed = 0
 						self.rect.move_ip(0,-(self.rect.bottomright[1]-object.rect.topright[1]))
-				
 
 def callback():
 	pass
@@ -98,6 +92,9 @@ for x in range(864/64):
 	_plat.set_pos((x*64,350))
 	somber.add_active(_plat)
 
+_plat = platform('wall-1.png')
+_plat.set_pos((128,246))
+somber.add_active(_plat)
 _plat = platform('wall-1.png')
 _plat.set_pos((128,300))
 somber.add_active(_plat)
