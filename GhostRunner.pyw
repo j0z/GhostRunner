@@ -165,13 +165,6 @@ def callback():
 	if gamestate=='designer':
 		ghost.rect.topleft = ((somber.mouse_pos[0]/64)*64,(somber.mouse_pos[1]/64)*64)
 
-<<<<<<< HEAD
-for x in range(864/64):
-	#if x == 3: continue
-	_plat = platform('platform-2.png')
-	_plat.set_pos((x*64,364))
-	somber.add_active(_plat)
-=======
 def mouse_down(button):	
 	if gamestate=='designer':
 		if button==1:
@@ -185,7 +178,6 @@ def mouse_down(button):
 			if _collides:
 				for object in _collides:
 					object.kill()
->>>>>>> 30cf0072c4f0e406452cc9383a1fcfbd6d2ceea9
 
 def load(file):
 	for object in level.load(file):
