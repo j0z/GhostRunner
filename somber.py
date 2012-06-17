@@ -175,7 +175,7 @@ class general(pygame.sprite.Sprite):
 		
 		self.image = self.sprite
 		self.rect = self.image.get_rect()
-		self.rect.center = self.pos
+		self.rect.topleft = self.pos
 		self.image.blit(self.sprite,self.rect)
 
 		pygame.sprite.Sprite.__init__(self)
@@ -245,7 +245,7 @@ class active(general):
 			else: self.vspeed = self.vspeed_min
 		
 		if not self.x_limit_max == None:
-			if self.pos[0]+self.image.get_width()>self.x_limit_max:
+			if self.rect.topright[0]>self.x_limit_max:
 				if self.hspeed>0:
 					self.hspeed = 0
 		
@@ -255,7 +255,7 @@ class active(general):
 					self.hspeed = 0
 					
 		if not self.y_limit_max == None:
-			if self.pos[1]+self.image.get_height()>self.y_limit_max:
+			if self.rect.bottomleft[1]>self.y_limit_max:
 				if self.vspeed>0:
 					self.vspeed = 0
 		
@@ -280,7 +280,8 @@ class active(general):
 		return False
 	
 	def collides_with_group(self,group):
-		_collides = pygame.sprite.spritecollideany(self,group)
+		#_collides = pygame.sprite.spritecollideany(self,group)
+		_collides = pygame.sprite.spritecollide(self,group,False)
 		if _collides:
 			return _collides
 		
