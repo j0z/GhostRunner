@@ -7,6 +7,20 @@ Changed
 -------
 * Added on_ground flag to character
 * Rewrote collision logic
+* Added level.py
+* Added ghost_object class for use with designer
+* Somber: Added mouse events
+* Somber: Added `color` argument to somber.write()
+* Somber: set_pos() now has a `set_start` flag for setting start_pos
+* Somber: get_all_resources()
+* Somber: Fixed set_alpha()
+* mouse_down()
+* load()
+* save()
+* enter_designer()
+* reset_level()
+* File format for levels established
+* Tile selector in designer
 
 Previous Version: 06.16.2012
 ---------------------------

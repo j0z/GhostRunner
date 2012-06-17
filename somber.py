@@ -7,12 +7,11 @@ __license__ = 'WTFPLv2'
 __version__ = '0.1'
 __about__   = '2d game engine using PyGame'
 
-class somber:
+class Somber:
 	def __init__(self,name='Somber Engine',win_size=(320,240),fps=60):
 		self.name = name
 		self.win_size = win_size
 		self.fps = fps
-		
 		self.state = 'running'
 		
 		#Various
@@ -21,6 +20,7 @@ class somber:
 			'down':False,
 			'left':False,
 			'right':False}
+		self.mouse_pos = (0,0)
 		
 		#Lists
 		self.fonts = []
@@ -43,6 +43,18 @@ class somber:
 		
 		#Create our sprite groups
 		self.active_objects = pygame.sprite.RenderUpdates()
+	
+	def get_all_resources(self):
+		_ret = []
+		
+		for root, dirs, files in os.walk(self.resource_dir):
+			for infile in files:
+				_fname = os.path.join(root, infile)
+				file, ext = os.path.splitext(_fname)
+				if ext in ['.jpg','.JPG','.png','.PNG']:
+					_ret.append(infile)
+		
+		return _ret
 	
 	def create_group(self):
 		return pygame.sprite.RenderUpdates()
@@ -88,10 +100,10 @@ class somber:
 		
 		pygame.display.update()
 	
-	def write(self,font,pos,text,aa=True):
+	def write(self,font,pos,text,color=(0,0,0),aa=True):
 		_font = self.get_font(font)['font']
 		
-		self.dirty_rects.append(self.window.blit(_font.render(text, aa, (255,0,0)),pos))
+		self.dirty_rects.append(self.window.blit(_font.render(text, aa, color),pos))
 	
 	def get_input(self):
 		for event in pygame.event.get():
@@ -118,7 +130,7 @@ class somber:
 					self.input['downright'] = True
 				
 				for entry in self.keybinds:
-					if ord(entry['key']) == event.key:
+					if len(entry['key'])==1 and ord(entry['key']) == event.key:
 						entry['callback']()
 			
 			elif event.type == KEYUP:
@@ -138,6 +150,14 @@ class somber:
 					self.input['downleft'] = False
 				elif event.key == K_KP3:
 					self.input['downright'] = False
+			
+			elif event.type == MOUSEMOTION:
+				self.mouse_pos = tuple(event.pos)
+			
+			elif event.type == MOUSEBUTTONDOWN:
+				for entry in self.keybinds:
+					if entry['key']=='m1':
+						entry['callback'](event.button)
 	
 	def run(self,callback):
 		while self.state=='running':
@@ -180,12 +200,15 @@ class general(pygame.sprite.Sprite):
 
 		pygame.sprite.Sprite.__init__(self)
 	
-	def set_pos(self,pos):
+	def set_pos(self,pos,set_start=False):
 		self.rect.topleft = list(pos)
+		if set_start: self.start_pos = list(pos)
 	
 	def set_movement(self,type):
 		if type in ['horizontal','vertical','ortho']:
 			self.movement = type
+		elif type == None:
+			self.movement = None
 		else:
 			self.movement = None
 			
@@ -228,9 +251,14 @@ class active(general):
 		
 		self.gravity = 0
 	
+	def set_sprite(self,sprite):
+		self.sprite = self.somber.get_sprite(sprite)
+		self.image = self.sprite
+		self.image.blit(self.sprite,(0,0))
+	
 	def set_alpha(self,val):
-		self.sprite.set_alpha(val)
-		self.image.blit(self.sprite,self.rect)
+		self.image = self.sprite.copy()
+		self.image.set_alpha(val)
 	
 	def update(self):
 		self.pos = list(self.rect.topleft)
@@ -283,7 +311,6 @@ class active(general):
 		return False
 	
 	def collides_with_group(self,group):
-		#_collides = pygame.sprite.spritecollideany(self,group)
 		_collides = pygame.sprite.spritecollide(self,group,False)
 		if _collides:
 			return _collides
