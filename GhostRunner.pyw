@@ -1,5 +1,4 @@
 import somber as somber_engine
-from tiles import TILES
 import logging
 import level
 import time
