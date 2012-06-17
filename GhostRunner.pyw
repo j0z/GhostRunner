@@ -44,10 +44,11 @@ class character(somber_engine.active):
 	def __init__(self):
 		somber_engine.active.__init__(self,'mario.png',somber=somber)
 		
-		somber.add_active(self)
+		self.on_ground = False
 	
 	def jump(self):
-		self.vspeed = -10
+		if self.on_ground:
+			self.vspeed = -10
 	
 	def update(self):
 		somber_engine.active.update(self)
@@ -82,6 +83,15 @@ class character(somber_engine.active):
 					elif self.collide_at((self.rect.bottomright[0]-1,self.rect.bottomright[1]+1),object):
 						self.vspeed = 0
 						self.rect.move_ip(0,-(self.rect.bottomright[1]-object.rect.topright[1]))
+					
+				if self.collide_at((self.rect.bottomleft[0],self.rect.bottomleft[1]+3),object):
+					self.on_ground = True
+				elif self.collide_at((self.rect.bottomright[0]-1,self.rect.bottomright[1]+3),object):
+					self.on_ground = True
+				else:
+					self.on_ground = False
+		
+		if self.vspeed>=1 or self.vspeed<0: self.on_ground = False
 
 def callback():
 	pass
