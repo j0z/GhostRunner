@@ -1,5 +1,4 @@
 import somber as somber_engine
-from tiles import TILES
 import logging
 import level
 import time
@@ -13,6 +12,12 @@ if os.path.exists('release.lock'):
 else:
 	__version__ = time.strftime('%m.%d.%Y')
 
+##TODO: Remove
+#To prevent crashes on non-dev machines
+try:
+	os.mkdir('levels')
+except:
+	pass
 
 #Setup logging
 logger = logging.getLogger()
