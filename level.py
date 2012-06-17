@@ -15,7 +15,7 @@ class level:
 		try:
 			_file = open(file,'r')
 		except:
-			raise Exception('Could not find level \'%s\'!' % file)
+			print 'Could not find level \'%s\'!' % file
 		
 		try:
 			for tile in json.loads(_file.readline()):
