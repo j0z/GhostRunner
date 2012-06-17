@@ -16,6 +16,7 @@ class level:
 			_file = open(file,'r')
 		except:
 			print 'Could not find level \'%s\'!' % file
+			return self.tiles
 		
 		try:
 			for tile in json.loads(_file.readline()):
