@@ -7,12 +7,11 @@ __license__ = 'WTFPLv2'
 __version__ = '0.1'
 __about__   = '2d game engine using PyGame'
 
-class somber:
+class Somber:
 	def __init__(self,name='Somber Engine',win_size=(320,240),fps=60):
 		self.name = name
 		self.win_size = win_size
 		self.fps = fps
-		
 		self.state = 'running'
 		
 		#Various
@@ -21,6 +20,7 @@ class somber:
 			'down':False,
 			'left':False,
 			'right':False}
+		self.mouse_pos = (0,0)
 		
 		#Lists
 		self.fonts = []
@@ -88,10 +88,10 @@ class somber:
 		
 		pygame.display.update()
 	
-	def write(self,font,pos,text,aa=True):
+	def write(self,font,pos,text,color=(0,0,0),aa=True):
 		_font = self.get_font(font)['font']
 		
-		self.dirty_rects.append(self.window.blit(_font.render(text, aa, (255,0,0)),pos))
+		self.dirty_rects.append(self.window.blit(_font.render(text, aa, color),pos))
 	
 	def get_input(self):
 		for event in pygame.event.get():
@@ -118,7 +118,7 @@ class somber:
 					self.input['downright'] = True
 				
 				for entry in self.keybinds:
-					if ord(entry['key']) == event.key:
+					if len(entry['key'])==1 and ord(entry['key']) == event.key:
 						entry['callback']()
 			
 			elif event.type == KEYUP:
@@ -138,6 +138,14 @@ class somber:
 					self.input['downleft'] = False
 				elif event.key == K_KP3:
 					self.input['downright'] = False
+			
+			elif event.type == MOUSEMOTION:
+				self.mouse_pos = tuple(event.pos)
+			
+			elif event.type == MOUSEBUTTONDOWN:
+				for entry in self.keybinds:
+					if entry['key']=='m1':
+						entry['callback']()
 	
 	def run(self,callback):
 		while self.state=='running':
@@ -180,12 +188,15 @@ class general(pygame.sprite.Sprite):
 
 		pygame.sprite.Sprite.__init__(self)
 	
-	def set_pos(self,pos):
+	def set_pos(self,pos,set_start=False):
 		self.rect.topleft = list(pos)
+		if set_start: self.start_pos = list(pos)
 	
 	def set_movement(self,type):
 		if type in ['horizontal','vertical','ortho']:
 			self.movement = type
+		elif type == None:
+			self.movement = None
 		else:
 			self.movement = None
 			
