@@ -17,8 +17,11 @@ class level:
 		except:
 			raise Exception('Could not find level \'%s\'!' % file)
 		
-		for tile in json.loads(_file.readline()):
-			self.add_object(tile)
+		try:
+			for tile in json.loads(_file.readline()):
+				self.add_object(tile)
+		except ValueError:
+			print 'Could not load level: \'%s\' was empty.' % file
 		
 		_file.close()
 		

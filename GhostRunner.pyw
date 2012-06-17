@@ -35,6 +35,7 @@ logging.info('%s - %s' % (__name__,__version__))
 somber = somber_engine.Somber(name='%s - %s' % (__name__,__version__),win_size=(768,640))
 somber.resource_dir = os.path.join('Art','Tiles','mayan')
 somber.solid_objects = somber.create_group()
+somber.selector_objects = somber.create_group()
 somber.add_font('ProggyClean.ttf',16)
 
 #Create a level object
@@ -43,16 +44,49 @@ level = level.level()
 #General gamestate stuff
 gamestate = 'playing'
 ghost = None
+ghost_selector = None
 
-class ghost_object(somber_engine.active):
+class ghost_selector(somber_engine.active):
+	def __init__(self,sprite):
+		somber_engine.active.__init__(self,sprite,somber=somber)
+		self.sprite_name = sprite
+		
+		#self.can_place = ['platform-1.png','platform-2.png']
+		#self.placing = 0
+		somber.selector_objects.add(self)
+		
+	def set_sprite(self,sprite):
+		##TODO: Make this is function of Somber
+		somber_engine.active.set_sprite(self,sprite)
+		self.sprite_name = sprite
+	
+	def click(self):
+		pass
+		#self.placing += 1
+		
+		#if self.placing >= len(self.can_place):
+		#	self.placing = 0
+		
+		#self.set_sprite(self.can_place[self.placing])
+
+class ghost_placer(somber_engine.active):
 	def __init__(self,sprite):
 		somber_engine.active.__init__(self,sprite,somber=somber)
 		self.sprite_name = sprite
 	
+	def set_sprite(self,sprite):
+		somber_engine.active.set_sprite(self,sprite)
+		self.sprite_name = sprite
+	
 	def place(self):
-		_plat = platform(self.sprite_name)
-		_plat.set_pos(self.pos,set_start=True)
-		somber.add_active(_plat)
+		_collides = ghost.collides_with_group(somber.selector_objects)
+		
+		if _collides:
+			self.set_sprite(_collides[0].sprite_name)
+		else:
+			_plat = platform(self.sprite_name)
+			_plat.set_pos(self.pos,set_start=True)
+			somber.add_active(_plat)
 
 class platform(somber_engine.active):
 	def __init__(self,sprite):
@@ -126,9 +160,19 @@ def callback():
 	if gamestate=='designer':
 		ghost.rect.topleft = ((somber.mouse_pos[0]/64)*64,(somber.mouse_pos[1]/64)*64)
 
-def mouse_down():	
+def mouse_down(button):	
 	if gamestate=='designer':
-		ghost.place()
+		if button==1:
+			ghost.place()
+		elif button==2:
+			ghost_selector.click()
+			ghost.set_sprite(ghost_selector.sprite_name)
+		elif button==3:
+			_collides = ghost.collides_with_group(somber.solid_objects)
+			
+			if _collides:
+				for object in _collides:
+					object.kill()
 
 def load(file):
 	for object in level.load(file):
@@ -137,9 +181,6 @@ def load(file):
 		somber.add_active(_plat)
 
 def save():
-	#Since this is called externally, we have to set a global
-	global level,gamestate
-	
 	if gamestate=='designer':
 		level.tiles = []
 		
@@ -159,18 +200,42 @@ def enter_designer():
 	_player.hspeed = 0
 	_player.set_movement(None)
 	
-	#Create our ghost
-	ghost = ghost_object('platform-2.png')
-	ghost.set_pos(somber.mouse_pos)
-	somber.add_active(ghost)
+	#Create our ghost if we haven't already
+	if not ghost:
+		ghost = ghost_placer('platform-1.png')
+		ghost.set_pos(somber.mouse_pos)
+		somber.add_active(ghost)
+		ghost.set_alpha(150)
+		
+		_x = 1
+		_y = 9
+		for resource in somber.get_all_resources():
+			_ghost_selector = ghost_selector(resource)
+			_ghost_selector.set_pos((_x*64,_y*64))
+			somber.add_active(_ghost_selector)
+			if _x>=12:
+				_x=0
+				_y-=1
+			_x+=1
+	else:
+		ghost.set_alpha(150)
+		for object in somber.selector_objects:
+			object.set_alpha(255)
 	
 	somber.write('ProggyClean.ttf',(0,0),'Designer',color=(90,90,90),aa=False)
 	
 	gamestate = 'designer'
 
 def reset_level():
+	global gamestate
+	
 	for object in somber.solid_objects:
 		object.rect.topleft = object.start_pos
+	
+	if ghost:
+		ghost.set_alpha(0)
+		for object in somber.selector_objects:
+			object.set_alpha(0)
 	
 	_player.set_pos((80,250))
 	_player.gravity = 0.3
@@ -179,7 +244,7 @@ def reset_level():
 
 _player = character()
 _player.x_limit_min = 0
-_player.x_limit_max = 800
+_player.x_limit_max = 768
 _player.y_limit_max = 600
 _player.set_pos((80,250))
 _player.hspeed_max = 3
