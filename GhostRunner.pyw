@@ -30,7 +30,7 @@ logging.info('%s - %s' % (__name__,__version__))
 
 
 #Setup Somber
-somber = somber_engine.somber(name='%s - %s' % (__name__,__version__),win_size=(800,600))
+somber = somber_engine.somber(name='%s - %s' % (__name__,__version__),win_size=(640,480))
 somber.resource_dir = os.path.join('Art','Tiles','mayan')
 somber.solid_objects = somber.create_group()
 
@@ -47,8 +47,7 @@ class character(somber_engine.active):
 		somber.add_active(self)
 	
 	def jump(self):
-		self.vspeed = -8
-		#self.gravity = 0.3
+		self.vspeed = -10
 	
 	def update(self):
 		somber_engine.active.update(self)
@@ -57,21 +56,32 @@ class character(somber_engine.active):
 		
 		if _collides:
 			for object in _collides:
-				_xoffset_right_mid = (self.rect.midright[0]-object.rect.midleft[0])
-				_xoffset_left_mid = (object.rect.midright[0]-self.rect.midleft[0])
-				_yoffset_bottom = (self.rect.midbottom[1]-object.rect.topleft[1])
-				
-				if _xoffset_right_mid<30 and _yoffset_bottom>1 and self.vspeed<=1:
-					self.rect.move_ip(-_xoffset_right_mid,0)
+				#Left
+				if self.collide_at((self.rect.topleft[0],self.rect.topleft[1]+1),object):
 					self.hspeed = 0
-				
-				if _xoffset_left_mid<30 and _yoffset_bottom>1 and self.vspeed<=1:
-					self.rect.move_ip(_xoffset_left_mid,0)
+					self.rect.move_ip(-(self.rect.topleft[0]-object.rect.topright[0]),0)
+				elif self.collide_at((self.rect.bottomleft[0],
+					self.rect.bottomleft[1]-(self.vspeed+1)),object):
 					self.hspeed = 0
+					self.rect.move_ip(-(self.rect.bottomleft[0]-object.rect.bottomright[0]),0)
 				
-				if _yoffset_bottom<30 and self.vspeed>=0:
-					self.rect.move_ip(0,-_yoffset_bottom)
-					self.vspeed = 0
+				#Right
+				elif self.collide_at((self.rect.topright[0],self.rect.topright[1]+1),object):
+					self.hspeed = 0
+					self.rect.move_ip(-(self.rect.topright[0]-object.rect.topleft[0]),0)
+				elif self.collide_at((self.rect.bottomright[0],
+					self.rect.bottomright[1]-(self.vspeed+1)),object):
+					self.hspeed = 0
+					self.rect.move_ip(-(self.rect.bottomright[0]-object.rect.bottomleft[0]),0)
+				
+				#Down
+				elif self.vspeed>=0:
+					if self.collide_at((self.rect.bottomleft[0],self.rect.bottomleft[1]+1),object):
+						self.vspeed = 0
+						self.rect.move_ip(0,-(self.rect.bottomleft[1]-object.rect.topleft[1]))
+					elif self.collide_at((self.rect.bottomright[0]-1,self.rect.bottomright[1]+1),object):
+						self.vspeed = 0
+						self.rect.move_ip(0,-(self.rect.bottomright[1]-object.rect.topright[1]))
 
 def callback():
 	pass
@@ -83,6 +93,9 @@ for x in range(864/64):
 	somber.add_active(_plat)
 
 _plat = platform('wall-1.png')
+_plat.set_pos((128,246))
+somber.add_active(_plat)
+_plat = platform('wall-1.png')
 _plat.set_pos((128,300))
 somber.add_active(_plat)
 
@@ -90,7 +103,7 @@ _player = character()
 _player.x_limit_min = 0
 _player.x_limit_max = 800
 _player.y_limit_max = 600
-_player.set_pos((80,100))
+_player.set_pos((80,250))
 _player.gravity = 0.3
 _player.set_movement('horizontal')
 _player.hspeed_max = 3

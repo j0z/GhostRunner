@@ -274,6 +274,9 @@ class active(general):
 		self.rect.topleft = [self.rect.topleft[0]+round(self.hspeed),
 			self.rect.topleft[1]+round(self.vspeed)]
 	
+	def collide_at(self,pos,other):
+		return other.rect.collidepoint((pos))
+	
 	def collides_with(self,object):
 		if self.rect.colliderect(object.rect): return True
 		
