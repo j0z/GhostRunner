@@ -5,6 +5,7 @@ Current Version: 06.17.2012
 ---------------------------
 Changed
 -------
+* Added on_ground flag to character
 * Rewrote collision logic
 
 Previous Version: 06.16.2012
