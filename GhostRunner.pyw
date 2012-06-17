@@ -79,7 +79,7 @@ def callback():
 for x in range(864/64):
 	#if x == 3: continue
 	_plat = platform('platform-2.png')
-	_plat.set_pos((x*64,350))
+	_plat.set_pos((x*64,364))
 	somber.add_active(_plat)
 
 _plat = platform('wall-1.png')
