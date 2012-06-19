@@ -5,6 +5,8 @@ Current Version: 06.19.2012
 ---------------------------
 Changed
 -------
+* Somber: set_background_image()
+* Somber: set_background_color()
 * Crashfix
 
 Previous Version: 06.17.2012

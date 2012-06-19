@@ -93,9 +93,15 @@ class Somber:
 		
 		return None
 	
-	def set_background(self,name):
+	def set_background_image(self,name):
 		self.background_image = self.get_sprite(name)
 		self.background.blit(self.background_image,(0,0))
+		self.window.blit(self.background,(0,0))
+		
+		pygame.display.update()
+	
+	def set_background_color(self,color):
+		self.background.fill(color)
 		self.window.blit(self.background,(0,0))
 		
 		pygame.display.update()

@@ -88,6 +88,7 @@ class ghost_placer(somber_engine.active):
 		
 		if _collides:
 			self.set_sprite(_collides[0].sprite_name)
+			print _collides[0].sprite_name
 		else:
 			_plat = platform(self.sprite_name)
 			_plat.set_pos(self.pos,set_start=True)
@@ -169,9 +170,9 @@ def mouse_down(button):
 	if gamestate=='designer':
 		if button==1:
 			ghost.place()
-		elif button==2:
-			ghost_selector.click()
-			ghost.set_sprite(ghost_selector.sprite_name)
+			#elif button==2:
+			#ghost_selector.click()
+			#ghost.set_sprite(ghost_selector.sprite_name)
 		elif button==3:
 			_collides = ghost.collides_with_group(somber.solid_objects)
 			
@@ -263,5 +264,6 @@ somber.bind_key('x',enter_designer)
 somber.bind_key('m1',mouse_down)
 somber.bind_key('s',save)
 somber.add_active(_player)
-somber.set_background(os.path.join('Tiles','temp_background.png'))
+somber.set_background_image(os.path.join('Tiles','temp_background.png'))
+somber.set_background_color((150,150,150))
 somber.run(callback)
