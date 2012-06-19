@@ -1,7 +1,13 @@
 Ghost Runner - readme
 =====================
 
-Current Version: 06.17.2012
+Current Version: 06.19.2012
+---------------------------
+Changed
+-------
+* Crashfix
+
+Previous Version: 06.17.2012
 ---------------------------
 Changed
 -------

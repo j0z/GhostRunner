@@ -52,7 +52,7 @@ class Somber:
 				_fname = os.path.join(root, infile)
 				file, ext = os.path.splitext(_fname)
 				if ext in ['.jpg','.JPG','.png','.PNG']:
-					_ret.append(infile)
+					_ret.append(_fname.replace(self.resource_dir+os.sep,''))
 		
 		return _ret
 	
@@ -166,8 +166,6 @@ class Somber:
 			
 			#Update all groups
 			self.active_objects.update()
-			#static.update()
-			
 			self.active_objects.clear(self.window,self.background)
 			
 			callback()

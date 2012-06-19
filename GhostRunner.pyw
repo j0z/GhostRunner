@@ -38,7 +38,7 @@ logging.info('%s - %s' % (__name__,__version__))
 
 #Setup Somber
 somber = somber_engine.Somber(name='%s - %s' % (__name__,__version__),win_size=(768,640))
-somber.resource_dir = os.path.join('Art','Tiles','mayan')
+somber.resource_dir = os.path.join('Art')
 somber.solid_objects = somber.create_group()
 somber.selector_objects = somber.create_group()
 somber.add_font('ProggyClean.ttf',16)
@@ -110,7 +110,7 @@ class platform(somber_engine.active):
 
 class character(somber_engine.active):
 	def __init__(self):
-		somber_engine.active.__init__(self,'mario.png',somber=somber)
+		somber_engine.active.__init__(self,os.path.join('Characters','stand.png'),somber=somber)
 		
 		self.on_ground = False
 	
@@ -207,7 +207,7 @@ def enter_designer():
 	
 	#Create our ghost if we haven't already
 	if not ghost:
-		ghost = ghost_placer('platform-1.png')
+		ghost = ghost_placer(os.path.join('Tiles','mayan','platform-1.png'))
 		ghost.set_pos(somber.mouse_pos)
 		somber.add_active(ghost)
 		ghost.set_alpha(150)
@@ -263,5 +263,5 @@ somber.bind_key('x',enter_designer)
 somber.bind_key('m1',mouse_down)
 somber.bind_key('s',save)
 somber.add_active(_player)
-somber.set_background('temp_background.png')
+somber.set_background(os.path.join('Tiles','mayan','temp_background.png'))
 somber.run(callback)
