@@ -207,7 +207,7 @@ def enter_designer():
 	
 	#Create our ghost if we haven't already
 	if not ghost:
-		ghost = ghost_placer(os.path.join('Tiles','mayan','platform-1.png'))
+		ghost = ghost_placer(os.path.join('Tiles','platform-1.png'))
 		ghost.set_pos(somber.mouse_pos)
 		somber.add_active(ghost)
 		ghost.set_alpha(150)
@@ -254,7 +254,7 @@ _player.y_limit_max = 600
 _player.set_pos((80,250))
 _player.hspeed_max = 3
 
-load(os.path.join('levels','test_level.dat'))
+#load(os.path.join('levels','test_level.dat'))
 reset_level()
 
 somber.bind_key('z',_player.jump)
@@ -263,5 +263,5 @@ somber.bind_key('x',enter_designer)
 somber.bind_key('m1',mouse_down)
 somber.bind_key('s',save)
 somber.add_active(_player)
-somber.set_background(os.path.join('Tiles','mayan','temp_background.png'))
+somber.set_background(os.path.join('Tiles','temp_background.png'))
 somber.run(callback)
