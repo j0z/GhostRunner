@@ -178,7 +178,7 @@ def callback():
 			ghost.pos[1]+somber.camera_pos[1])
 	
 	if _player.pos[0]>=win_size[0]/2:
-		somber.camera_pos[0]+=_player.hspeed
+		somber.camera_pos[0]=_player.pos[0]-(win_size[0]/2)
 
 def mouse_down(button):	
 	if gamestate=='designer':
