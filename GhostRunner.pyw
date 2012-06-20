@@ -179,6 +179,8 @@ def callback():
 	
 	if _player.pos[0]>=win_size[0]/2:
 		somber.camera_pos[0]=_player.pos[0]-(win_size[0]/2)
+	if _player.pos[1]>=win_size[1]/2:
+		somber.camera_pos[1]=_player.pos[1]-(win_size[1]/2)
 
 def mouse_down(button):	
 	if gamestate=='designer':
@@ -190,12 +192,20 @@ def mouse_down(button):
 					object.kill()
 
 def move_cam_left():
-	if gamestate=='designer':
+	if gamestate=='designer' and self.camera_:
 		somber.camera_pos[0]-=64
 
 def move_cam_right():
 	if gamestate=='designer':
 		somber.camera_pos[0]+=64
+
+def move_cam_up():
+	if gamestate=='designer':
+		somber.camera_pos[1]-=64
+	
+def move_cam_down():
+	if gamestate=='designer':
+		somber.camera_pos[1]+=64
 
 def load(file):
 	for object in level.load(file):
@@ -269,7 +279,7 @@ def reset_level():
 _player = character()
 _player.x_limit_min = 0
 _player.x_limit_max = 1000
-_player.y_limit_max = 600
+_player.y_limit_max = 1000
 _player.set_pos((80,250))
 _player.hspeed_max = 4
 _player.hfriction_move = 0.2
@@ -282,8 +292,10 @@ somber.bind_key('z',_player.jump)
 somber.bind_key('c',reset_level)
 somber.bind_key('a',move_cam_left)
 somber.bind_key('d',move_cam_right)
+somber.bind_key('s',move_cam_down)
+somber.bind_key('w',move_cam_up)
 somber.bind_key('m1',mouse_down)
-somber.bind_key('s',save)
+somber.bind_key('p',save)
 
 if win_size == (768,832):
 	somber.bind_key('x',enter_designer)

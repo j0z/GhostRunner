@@ -403,6 +403,9 @@ def load_image(name):
 		print 'Could not find: %s' % name
 		sys.exit()
 	
+	if name.count('.png'):
+		image.convert_alpha()
+	#else:
 	image.set_colorkey((255,255,255))
 	
 	return image
