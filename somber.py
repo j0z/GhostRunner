@@ -7,6 +7,35 @@ __license__ = 'WTFPLv2'
 __version__ = '0.1'
 __about__   = '2d game engine using PyGame'
 
+class ActiveGroup(pygame.sprite.Group):
+	"""'Give me $20' -flags, 2012"""
+	def draw(self,surface):
+		spritedict = self.spritedict
+		surface_blit = surface.blit
+		dirty = self.lostsprites
+		self.lostsprites = []
+		dirty_append = dirty.append
+		for s in self.sprites():
+			r = spritedict[s]
+			
+			if s.static:
+				newrect = surface_blit(s.image, s.rect)
+			else:
+				_pos = (s.rect.topleft[0]-s.somber.camera_pos[0],
+					s.rect.topleft[1]-s.somber.camera_pos[1])
+				newrect = surface_blit(s.image, _pos)
+			
+			if r is 0:
+				dirty_append(newrect)
+			else:
+				if newrect.colliderect(r):
+					dirty_append(newrect.union(r))
+				else:
+					dirty_append(newrect)
+					dirty_append(r)
+			spritedict[s] = newrect
+		return dirty
+
 class Somber:
 	def __init__(self,name='Somber Engine',win_size=(320,240),fps=60):
 		self.name = name
@@ -21,6 +50,7 @@ class Somber:
 			'left':False,
 			'right':False}
 		self.mouse_pos = (0,0)
+		self.camera_pos = [0,0]
 		
 		#Lists
 		self.fonts = []
@@ -36,13 +66,14 @@ class Somber:
 
 		#Define the surfaces we'll be drawing to
 		self.window = pygame.display.set_mode(self.win_size)
+		self.buffer = pygame.Surface(self.win_size)
 		self.background = pygame.Surface(self.win_size)
 		
 		#Set caption
 		pygame.display.set_caption(self.name)
 		
 		#Create our sprite groups
-		self.active_objects = pygame.sprite.RenderUpdates()
+		self.active_objects = ActiveGroup()
 	
 	def get_all_resources(self):
 		_ret = []
@@ -191,6 +222,7 @@ class general(pygame.sprite.Sprite):
 		
 		self.pos = list(pos)
 		self.start_pos = list(pos)
+		self.static = False
 		
 		self.movement = None
 		

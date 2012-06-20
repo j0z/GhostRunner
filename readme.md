@@ -1,10 +1,19 @@
 Ghost Runner - readme
 =====================
 
-Current Version: 06.19.2012
+Current Version: 06.20.2012
 ---------------------------
 Changed
 -------
+* Platforming fixed
+
+Previous Version: 06.19.2012
+---------------------------
+Changed
+-------
+* Added level_pos variable to track the location of the mouse in game coordinates
+* Scrolling will cost you $20
+* -editor flag
 * Somber: set_background_image()
 * Somber: set_background_color()
 * Crashfix
