@@ -278,8 +278,7 @@ def reset_level():
 
 _player = character()
 _player.x_limit_min = 0
-_player.x_limit_max = 1000
-_player.y_limit_max = 1000
+_player.y_limit_max = 2000
 _player.set_pos((80,250))
 _player.hspeed_max = 4
 _player.hfriction_move = 0.2
