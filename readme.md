@@ -7,6 +7,12 @@ Changed
 -------
 * Platforming fixed
 
+Current Version: 06.20.2012
+---------------------------
+Changed
+-------
+* Somber: Added hfriction_move and hfriction_stop
+
 Previous Version: 06.19.2012
 ---------------------------
 Changed

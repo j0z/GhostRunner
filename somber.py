@@ -274,6 +274,8 @@ class active(general):
 		self.hspeed = 0
 		self.hspeed_max = 0
 		self.hspeed_min = 0
+		self.hfriction_move = 0
+		self.hfriction_stop = 0
 		
 		self.vspeed = 0
 		self.vspeed_max = 0
@@ -300,9 +302,24 @@ class active(general):
 		self.pos = list(self.rect.topleft)
 		
 		if self.movement=='horizontal':
-			if self.somber.input['right']: self.hspeed = self.hspeed_max
-			elif self.somber.input['left']: self.hspeed = -self.hspeed_max
-			else: self.hspeed = self.hspeed_min
+			if self.somber.input['right']:
+				if self.hfriction_move and self.hspeed<self.hspeed_max:
+					self.hspeed += self.hfriction_move
+				else:
+					self.hspeed = self.hspeed_max
+			elif self.somber.input['left']:
+				if self.hfriction_move and self.hspeed>-self.hspeed_max:
+					self.hspeed -= self.hfriction_move
+				else:
+					self.hspeed = -self.hspeed_max
+			else:
+				if self.hfriction_stop:
+					if self.hspeed>0:
+						self.hspeed -= self.hfriction_stop
+					elif self.hspeed<0:
+						self.hspeed += self.hfriction_stop
+				else:
+					self.hspeed = self.hspeed_min
 		elif self.movement=='vertical':
 			if self.somber.input['right']: self.vspeed = self.vspeed_max
 			elif self.somber.input['left']: self.vspeed = -self.vspeed_max

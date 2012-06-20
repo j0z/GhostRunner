@@ -101,7 +101,7 @@ class platform(somber_engine.active):
 		somber.solid_objects.add(self)
 	
 	def save(self):
-		_save = {}#TILES['standard'].copy()
+		_save = {}
 		_save['sprite'] = self.sprite_name
 		_save['pos'] = tuple(self.rect.topleft)
 		
@@ -271,7 +271,9 @@ _player.x_limit_min = 0
 _player.x_limit_max = 1000
 _player.y_limit_max = 600
 _player.set_pos((80,250))
-_player.hspeed_max = 3
+_player.hspeed_max = 4
+_player.hfriction_move = 0.2
+_player.hfriction_stop = 0.4
 
 load(os.path.join('levels','test_level.dat'))
 reset_level()
