@@ -398,14 +398,15 @@ class particle(active):
 
 def load_image(name):
 	try:
-		image = pygame.image.load(name).convert()
+		image = pygame.image.load(name)
 	except:
 		print 'Could not find: %s' % name
 		sys.exit()
 	
 	if name.count('.png'):
-		image.convert_alpha()
-	#else:
-	image.set_colorkey((255,255,255))
+		image=image.convert_alpha()
+	else:
+		image=image.convert()
+		image.set_colorkey((255,255,255))
 	
 	return image

@@ -192,7 +192,7 @@ def mouse_down(button):
 					object.kill()
 
 def move_cam_left():
-	if gamestate=='designer' and self.camera_:
+	if gamestate=='designer' and somber.camera_pos[0]:
 		somber.camera_pos[0]-=64
 
 def move_cam_right():
@@ -200,7 +200,7 @@ def move_cam_right():
 		somber.camera_pos[0]+=64
 
 def move_cam_up():
-	if gamestate=='designer':
+	if gamestate=='designer' and somber.camera_pos[1]:
 		somber.camera_pos[1]-=64
 	
 def move_cam_down():

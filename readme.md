@@ -8,6 +8,8 @@ Changed
 * Camera now follows the character correctly
 * Platforming fixed
 * Somber: Added hfriction_move and hfriction_stop
+* Somber: Fixed alpha transparency for PNGs
+* Can no longer jump while in the editor
 
 Previous Version: 06.19.2012
 ---------------------------
