@@ -93,6 +93,9 @@ class Somber:
 	def bind_key(self,key,callback):
 		self.keybinds.append({'key':key,'callback':callback})
 	
+	def make_rect(self,x,y,w,h):
+		return pygame.Rect(x,y,w,h)
+	
 	def add_active(self,object):
 		self.active_objects.add(object)
 	
@@ -230,9 +233,9 @@ class general(pygame.sprite.Sprite):
 		self.last_alpha = 255
 		
 		self.image = self.sprite
-		self.rect = self.image.get_rect()
-		self.rect.topleft = self.pos
-		self.image.blit(self.sprite,self.rect)
+		self.rect = self.image.get_bounding_rect()
+		#self.rect.x = self.pos[0]-self.rect.width/2
+		self.image.blit(self.image,(0,0))
 
 		pygame.sprite.Sprite.__init__(self)
 	
