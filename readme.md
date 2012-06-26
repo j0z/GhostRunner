@@ -1,7 +1,15 @@
 Ghost Runner - readme
 =====================
 
-Current Version: 06.20.2012
+Current Version: 06.25.2012
+---------------------------
+Changed
+-------
+* Backgrounds
+* Some rendering changes
+* Somber: draw_sprite_in_background()
+
+Previous Version: 06.20.2012
 ---------------------------
 Changed
 -------

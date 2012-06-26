@@ -54,6 +54,7 @@ level = level.level()
 
 #General gamestate stuff
 gamestate = 'playing'
+designer_layer = 'foreground'
 ghost = None
 ghost_selector = None
 
@@ -65,10 +66,29 @@ class ghost_selector(somber_engine.active):
 		
 		somber.selector_objects.add(self)
 		
+		somber.foreground_objects.add(self)
+		
 	def set_sprite(self,sprite):
 		##TODO: Make this is function of Somber
 		somber_engine.active.set_sprite(self,sprite)
 		self.sprite_name = sprite
+
+class background_tile(somber_engine.active):
+	def __init__(self,sprite):
+		somber_engine.active.__init__(self,sprite,somber=somber)
+		
+		self.sprite_name = sprite
+		self.static = False
+		
+		somber.background_objects.add(self)
+	
+	def save(self):
+		_save = {}
+		_save['sprite'] = self.sprite_name
+		_save['pos'] = tuple(self.rect.topleft)
+		_save['foreground'] = False
+		
+		return _save
 
 class ghost_placer(somber_engine.active):
 	def __init__(self,sprite):
@@ -76,6 +96,8 @@ class ghost_placer(somber_engine.active):
 		self.sprite_name = sprite
 		self.static = True
 		self.level_pos = (0,0)
+		
+		somber.foreground_objects.add(self)
 	
 	def set_sprite(self,sprite):
 		somber_engine.active.set_sprite(self,sprite)
@@ -86,8 +108,13 @@ class ghost_placer(somber_engine.active):
 		
 		if _collides:
 			self.set_sprite(_collides[0].sprite_name)
-		elif (somber.mouse_pos[1]/64)<=9:
+		elif designer_layer=='foreground':
 			_plat = platform(self.sprite_name)
+			_pos = (self.pos[0]+somber.camera_pos[0],self.pos[1]+somber.camera_pos[1])
+			_plat.set_pos(_pos,set_start=True)
+			somber.add_active(_plat)
+		elif designer_layer=='background':
+			_plat = background_tile(self.sprite_name)
 			_pos = (self.pos[0]+somber.camera_pos[0],self.pos[1]+somber.camera_pos[1])
 			_plat.set_pos(_pos,set_start=True)
 			somber.add_active(_plat)
@@ -99,11 +126,13 @@ class platform(somber_engine.active):
 		
 		#Make the object collide with the player
 		somber.solid_objects.add(self)
+		somber.foreground_objects.add(self)
 	
 	def save(self):
 		_save = {}
 		_save['sprite'] = self.sprite_name
 		_save['pos'] = tuple(self.rect.topleft)
+		_save['foreground'] = True
 		
 		return _save
 
@@ -112,6 +141,8 @@ class character(somber_engine.active):
 		somber_engine.active.__init__(self,os.path.join('Characters','stand.png'),somber=somber)
 		
 		self.on_ground = False
+		
+		somber.foreground_objects.add(self)
 	
 	def jump(self):
 		if self.on_ground and gamestate=='playing':
@@ -187,11 +218,23 @@ def callback():
 def mouse_down(button):	
 	if gamestate=='designer':
 		if button==1:
+			if designer_layer=='background':
+				for object in somber.background_objects:				
+					if ghost.level_pos == object.rect.topleft:
+						object.kill()
+			
 			ghost.place()
 		elif button==3:
-			for object in somber.solid_objects:				
-				if ghost.level_pos == object.rect.topleft:
-					object.kill()
+			if designer_layer=='foreground':
+				for object in somber.solid_objects:				
+					if ghost.level_pos == object.rect.topleft:
+						object.kill()
+						return
+			else:
+				for object in somber.background_objects:				
+					if ghost.level_pos == object.rect.topleft:
+						object.kill()
+						return
 
 def move_cam_left():
 	if gamestate=='designer' and somber.camera_pos[0]:
@@ -209,17 +252,35 @@ def move_cam_down():
 	if gamestate=='designer':
 		somber.camera_pos[1]+=64
 
+def set_foreground():
+	global designer_layer
+	designer_layer = 'foreground'
+	print 'Adding to foreground'
+
+def set_background():
+	global designer_layer
+	designer_layer = 'background'
+	print 'Adding to background'
+
 def load(file):
 	for object in level.load(file):
-		_plat = platform(object['sprite'])
-		_plat.set_pos(object['pos'],set_start=True)
-		somber.add_active(_plat)
+		if object['foreground']:
+			_plat = platform(object['sprite'])
+			_plat.set_pos(object['pos'],set_start=True)
+			somber.add_active(_plat)
+		else:
+			_plat = background_tile(object['sprite'])
+			_plat.set_pos(object['pos'],set_start=True)
+			somber.add_active(_plat)
 
 def save():
 	if gamestate=='designer':
 		level.tiles = []
 		
 		for object in somber.solid_objects:
+			level.add_object(object.save())
+		
+		for object in somber.background_objects:
 			level.add_object(object.save())
 		
 		level.save(os.path.join('levels','test_level.dat'))
@@ -296,7 +357,10 @@ _player.hspeed_max = 4
 _player.hfriction_move = 0.2
 _player.hfriction_stop = 0.4
 
-load(os.path.join('levels','test_level.dat'))
+try:
+	load(os.path.join('levels','test_level.dat'))
+except:
+	print 'Error loading level.'
 reset_level()
 
 somber.bind_key('z',_player.jump)
@@ -310,6 +374,8 @@ somber.bind_key('p',save)
 
 if '-editor' in sys.argv:
 	somber.bind_key('\t',enter_designer)
+	somber.bind_key('f',set_foreground)
+	somber.bind_key('g',set_background)
 
 somber.add_active(_player)
 somber.set_background_color((150,150,150))

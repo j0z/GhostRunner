@@ -73,6 +73,8 @@ class Somber:
 		pygame.display.set_caption(self.name)
 		
 		#Create our sprite groups
+		self.background_objects = ActiveGroup()
+		self.foreground_objects = ActiveGroup()
 		self.active_objects = ActiveGroup()
 	
 	def get_all_resources(self):
@@ -137,6 +139,11 @@ class Somber:
 	def set_background_color(self,color):
 		self.background.fill(color)
 		self.window.blit(self.background,(0,0))
+		
+		pygame.display.update()
+	
+	def draw_sprite_in_background(self,sprite,pos):
+		self.background.blit(self.get_sprite(sprite),pos)
 		
 		pygame.display.update()
 	
@@ -212,12 +219,15 @@ class Somber:
 			
 			#Update all groups
 			self.active_objects.update()
-			self.active_objects.clear(self.window,self.background)
+			self.background_objects.clear(self.window,self.background)
+			self.foreground_objects.clear(self.window,self.background)
 			
 			callback()
 			
 			#Draw all groups
-			self.dirty_rects.extend(self.active_objects.draw(self.window))
+			#self.dirty_rects.extend(self.static_objects.draw(self.window))
+			self.dirty_rects.extend(self.background_objects.draw(self.window))
+			self.dirty_rects.extend(self.foreground_objects.draw(self.window))
 			
 			#Update the screen
 			pygame.display.update(self.dirty_rects)
@@ -265,10 +275,11 @@ class general(pygame.sprite.Sprite):
 		pass
 
 class static(general):
-	def __init__(self,sprite=None,pos=(0,0)):		
+	def __init__(self,sprite=None,pos=(0,0),somber=None):		
 		general.__init__(self,sprite=sprite,pos=pos)
 		
-		static.add(self)
+		if not somber:
+			raise Exception('No somber callback set!')
 
 class active(general):
 	def __init__(self,sprite,pos=(0,0),somber=None):
