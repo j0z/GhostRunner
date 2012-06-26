@@ -145,6 +145,12 @@ class Somber:
 		
 		self.dirty_rects.append(self.window.blit(_font.render(text, aa, color),pos))
 	
+	def draw_square(self,pos,color,alpha=255):
+		_square = pygame.Surface((pos[2]-pos[0],pos[3]-pos[1]),flags=pygame.SRCALPHA)
+		_square.fill((color[0],color[1],color[2],alpha))
+		
+		self.dirty_rects.append(self.window.blit(_square,(pos[0],pos[1])))
+	
 	def get_input(self):
 		for event in pygame.event.get():
 			if event.type == QUIT or event.type == KEYDOWN and event.key in [K_ESCAPE,K_q]:
@@ -298,8 +304,9 @@ class active(general):
 		self.image.blit(self.sprite,(0,0))
 	
 	def set_alpha(self,val):
-		self.image = self.sprite.copy()
-		self.image.set_alpha(val)
+		self.image1 = self.image.copy()
+		self.image1.set_alpha(val)
+		self.image.blit(self.image1,(0,0))
 	
 	def update(self):
 		self.pos = list(self.rect.topleft)

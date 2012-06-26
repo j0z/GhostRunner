@@ -28,7 +28,7 @@ else:
 	logger.setLevel(logging.INFO)
 
 if '-editor' in sys.argv:
-	win_size = (768,832)
+	win_size = (768,640)
 else:
 	win_size = (768,640)
 
@@ -114,7 +114,7 @@ class character(somber_engine.active):
 		self.on_ground = False
 	
 	def jump(self):
-		if self.on_ground:
+		if self.on_ground and gamestate=='playing':
 			self.vspeed = -10
 	
 	def update(self):
@@ -176,6 +176,8 @@ def callback():
 		
 		ghost.level_pos = (ghost.pos[0]+somber.camera_pos[0],
 			ghost.pos[1]+somber.camera_pos[1])
+		
+		somber.draw_square((0,0,768,(len(somber.get_all_resources())/12)*64),(100,100,100))
 	
 	if _player.pos[0]>=win_size[0]/2:
 		somber.camera_pos[0]=_player.pos[0]-(win_size[0]/2)
@@ -238,25 +240,28 @@ def enter_designer():
 		ghost = ghost_placer(os.path.join('Tiles','platform-1.png'))
 		ghost.set_pos(somber.mouse_pos)
 		somber.add_active(ghost)
-		ghost.set_alpha(150)
 		
 		_x = 0
-		_y = 12
+		_y = 0
 		for resource in somber.get_all_resources():
 			_ghost_selector = ghost_selector(resource)
 			_ghost_selector.set_pos((_x*64,_y*64))
 			somber.add_active(_ghost_selector)
 			if _x>=12:
 				_x=-1
-				_y-=1
+				_y+=1
 			_x+=1
 	else:
-		ghost.set_alpha(150)
+		_x = 0
+		_y = 0
 		for object in somber.selector_objects:
-			object.set_alpha(255)
+			object.set_pos((_x*64,_y*64))
+			if _x>=12:
+				_x=-1
+				_y+=1
+			_x+=1
 	
 	somber.write('ProggyClean.ttf',(0,0),'Designer',color=(90,90,90),aa=False)
-	
 	gamestate = 'designer'
 
 def reset_level():
@@ -266,9 +271,16 @@ def reset_level():
 		object.rect.topleft = object.start_pos
 	
 	if ghost:
-		ghost.set_alpha(0)
+		ghost.set_pos((-64,-64))
+		
+		_x = 0
+		_y = 1
 		for object in somber.selector_objects:
-			object.set_alpha(0)
+			object.set_pos((_x*64,_y*-64))
+			if _x>=12:
+				_x=-1
+				_y+=1
+			_x+=1
 	
 	somber.camera_pos = [0,0]
 	_player.set_pos((80,250))
@@ -296,8 +308,8 @@ somber.bind_key('w',move_cam_up)
 somber.bind_key('m1',mouse_down)
 somber.bind_key('p',save)
 
-if win_size == (768,832):
-	somber.bind_key('x',enter_designer)
+if '-editor' in sys.argv:
+	somber.bind_key('\t',enter_designer)
 
 somber.add_active(_player)
 somber.set_background_color((150,150,150))
