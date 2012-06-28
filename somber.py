@@ -17,12 +17,21 @@ class ActiveGroup(pygame.sprite.Group):
 		dirty_append = dirty.append
 		for s in self.sprites():
 			r = spritedict[s]
-			
 			if s.static:
 				newrect = surface_blit(s.image, s.rect)
 			else:
 				_pos = (s.rect.topleft[0]-s.somber.camera_pos[0],
 					s.rect.topleft[1]-s.somber.camera_pos[1])
+				_posright = (s.rect.topright[0]-s.somber.camera_pos[0],
+					s.rect.topright[1]-s.somber.camera_pos[1])
+				_posdown = (s.rect.bottomright[0]-s.somber.camera_pos[0],
+					s.rect.bottomright[1]-s.somber.camera_pos[1])
+				
+				if _posright[0]<0 or _pos[0]>s.somber.win_size[0]:
+					continue
+				elif _posdown[1]+16<0 or _posright[1]-8>s.somber.win_size[1]:
+					continue
+				
 				newrect = surface_blit(s.image, _pos)
 			
 			if r is 0:
