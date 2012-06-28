@@ -347,6 +347,7 @@ def reset_level():
 	_player.set_pos((80,250))
 	_player.gravity = 0.3
 	_player.set_movement('horizontal')
+	somber.set_background_color((150,150,150))
 	gamestate = 'playing'
 
 _player = character()

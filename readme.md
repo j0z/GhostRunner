@@ -6,6 +6,7 @@ Current Version: 06.27.2012
 Changed
 -------
 * Made some experimental changes to items blitting off-screen
+* Redraw background on level reset
 
 Previous Version: 06.25.2012
 ---------------------------
